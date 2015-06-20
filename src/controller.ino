@@ -3,9 +3,6 @@
 #include <EthernetUdp.h>
 #include <PubSubClient.h>
 
-#include <ButtonV2.h>
-ButtonV2 Button1;
-
 #define buttonPin 5
 #define ledPin 13
 
