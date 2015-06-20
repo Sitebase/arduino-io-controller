@@ -85,8 +85,8 @@ void loop()
 
         //Serial.println(bla);
 
-        char buf[3];
-        sprintf(buf, "%d", (previousState ^ currentState));
+        char buf[40];
+        sprintf(buf, "{\"channel\":0,\"state\":%d}", (previousState ^ currentState));
         Serial.println(previousState);
         Serial.println(currentState);
         Serial.println("************");
