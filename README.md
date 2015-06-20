@@ -20,3 +20,6 @@ a Window XP system.
 * Set output states using MQTT
 * Detect different types of events: click, double click, hold, ...
 
+## Resources
+
+* [Button click types detect](http://forum.arduino.cc/index.php?topic=14479.0)
