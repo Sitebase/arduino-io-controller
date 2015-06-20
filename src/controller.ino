@@ -3,13 +3,18 @@
 #include <EthernetUdp.h>
 #include <PubSubClient.h>
 
-#define buttonPin 12
+#include <ButtonV2.h>
+ButtonV2 Button1;
+
+#define buttonPin 5
 #define ledPin 13
 
 char NAME[] = "home-io-controller";
 char VERSION[] = "0.0.1";
 
 int buttonState = 0;
+bool puby = false;
+int buttonCheck = 0;
 
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 IPAddress ip(192, 168, 1, 177);
@@ -21,39 +26,48 @@ EthernetServer server(80);
 PubSubClient clientbla(remote, 1883, callback, ethClient);
 
 void setup() {
-  Serial.begin(9600);
-  Ethernet.begin(mac,ip);
-  server.begin();
+    Serial.begin(9600);
+    Ethernet.begin(mac,ip);
+    server.begin();
 
-  pinMode(ledPin, OUTPUT);
-  pinMode(buttonPin, INPUT);
+    pinMode(buttonPin, INPUT_PULLUP);
+    Button1.SetStateAndTime(LOW, 10);
 
-  Serial.println("Try connect ....");
-  if (clientbla.connect("arduinoClient")) {
-    Serial.println("Connected to server");
-    clientbla.publish("outTopic","hello world");
-    clientbla.subscribe("inTopic");
-  }
+    if (!clientbla.connected()) {
+        if (clientbla.connect("arduinoClient")) {
+            Serial.println("Connected to server");
+        }
+    }
 
 }
 
 void loop()
 {
-  endpoint();
 
-  buttonState = digitalRead(buttonPin);
+    // auto reconnect
+    if (!clientbla.connected()) {
+        if (clientbla.connect("arduinoClient")) {
+            Serial.println("Connected to server");
+        }
+    }
 
-  // check if the pushbutton is pressed.
-  // if it is, the buttonState is HIGH:
-  /*if (buttonState == LOW) {
-    clientbla.publish("outTopic","buttonx clicked");
-  }*/
+    endpoint();
 
-  if(clientbla.connected()) {
-    clientbla.publish("outTopic","hello world");
-}
+    if( puby ) {
+        char buffer[40];
+        sprintf(buffer,"{\"action\":\"input\",\"pin\":%d}",buttonCheck);
+        clientbla.publish("outTopic", buffer);
+        puby = false;
+    }
 
-  delay(1000);
+
+    buttonState = digitalRead(buttonPin);
+    if (buttonState == LOW) {
+        // turn LED on:
+        puby = true;
+        buttonCheck = buttonPin;
+    }
+
 }
 
 

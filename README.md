@@ -15,7 +15,7 @@ a Window XP system.
 
 ## Develop
 
-    node server.js
+    node server.js | bunyan
     ./build
 
 ## Goals

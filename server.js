@@ -8,7 +8,8 @@
  */
 var mosca = require('mosca');
 
-var server = new mosca.Server({ port: 1883 });
+//var server = new mosca.Server({ port: 1883, logger: {level: 'debug'} });
+var server = new mosca.Server({ port: 1883, keepalive: 5000000 });
 
 server.on('clientConnected', function(client) {
     console.log('client connected', client.id);
