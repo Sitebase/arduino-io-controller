@@ -53,7 +53,7 @@ void loop()
 
     if( currentState ^ 0 ) {
         char buf[40];
-        sprintf(buf, "{\"channel\":%d,\"state\":%d}", channel, (previousState ^ currentState));
+        sprintf(buf, "{\"channel\":%d,\"digitalState\":%d}", channel, (previousState ^ currentState));
         Serial.println(previousState);
         Serial.println(currentState);
         Serial.println("************");
