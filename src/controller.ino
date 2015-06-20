@@ -3,12 +3,7 @@
 #include <EthernetUdp.h>
 #include <PubSubClient.h>
 
-char NAME[] = "home-io-controller";
-char VERSION[] = "0.0.1";
-
-int buttonState = 0;
-bool puby = false;
-int buttonCheck = 0;
+#define channel 0
 
 int previousState = 0;
 int currentState = 0;
@@ -58,7 +53,7 @@ void loop()
 
     if( currentState ^ 0 ) {
         char buf[40];
-        sprintf(buf, "{\"channel\":0,\"state\":%d}", (previousState ^ currentState));
+        sprintf(buf, "{\"channel\":%d,\"state\":%d}", channel, (previousState ^ currentState));
         Serial.println(previousState);
         Serial.println(currentState);
         Serial.println("************");
