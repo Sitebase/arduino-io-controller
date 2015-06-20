@@ -22,16 +22,16 @@ void setup() {
     Ethernet.begin(mac,ip);
     server.begin();
 
-    /*pinMode(1, INPUT_PULLUP);
+    //pinMode(1, INPUT_PULLUP);
     pinMode(2, INPUT_PULLUP);
     pinMode(3, INPUT_PULLUP);
-    pinMode(4, INPUT_PULLUP);*/
+    //pinMode(4, INPUT_PULLUP);
     pinMode(5, INPUT_PULLUP);
     pinMode(6, INPUT_PULLUP);
     pinMode(7, INPUT_PULLUP);
     pinMode(8, INPUT_PULLUP);
-    /*pinMode(9, INPUT_PULLUP);
-    pinMode(10, INPUT_PULLUP);*/
+    pinMode(9, INPUT_PULLUP);
+    //pinMode(10, INPUT_PULLUP);
 
     if (!clientbla.connected()) {
         if (clientbla.connect("arduinoClient")) {
@@ -52,11 +52,8 @@ void loop()
     }
 
     if( currentState ^ 0 ) {
-        char buf[40];
-        sprintf(buf, "{\"channel\":%d,\"digitalState\":%d}", channel, (previousState ^ currentState));
-        Serial.println(previousState);
-        Serial.println(currentState);
-        Serial.println("************");
+        char buf[15];
+        sprintf(buf, "{\"c\":%d,\"d\":%d}", channel, (previousState ^ currentState));
         clientbla.publish("outTopic", buf);
 
         // reset
@@ -67,16 +64,16 @@ void loop()
     // NOTE when I enable the two digital read lines it doesnt connect anymore to the mqtt server
     // i think its a memory problem so maybe remove the rest endpoint from the code
 
-    /*if( digitalRead(1) == LOW ) currentState = currentState | 1;
+    //if( digitalRead(1) == LOW ) currentState = currentState | 1; // is always low
     if( digitalRead(2) == LOW ) currentState = currentState | 2;
     if( digitalRead(3) == LOW ) currentState = currentState | 4;
-    if( digitalRead(4) == LOW ) currentState = currentState | 8;*/
+    //if( digitalRead(4) == LOW ) currentState = currentState | 8; // this input is broken on my UNO, it's always low
     if( digitalRead(5) == LOW ) currentState = currentState | 16;
     if( digitalRead(6) == LOW ) currentState = currentState | 32;
     if( digitalRead(7) == LOW ) currentState = currentState | 64;
     if( digitalRead(8) == LOW ) currentState = currentState | 128;
-    /*if( digitalRead(9) == LOW ) currentState = currentState | 256;
-    if( digitalRead(10) == LOW ) currentState = currentState | 512;*/
+    if( digitalRead(9) == LOW ) currentState = currentState | 256;
+    //if( digitalRead(10) == LOW ) currentState = currentState | 512; // doesn't connect to mqtt anymore if you enable this
 
 
 }
