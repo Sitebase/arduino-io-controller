@@ -13,6 +13,11 @@ By keeping the controller so simple it's making it possible to write all the log
 a Window XP system.
 * I like to build my own stuff :)
 
+## Develop
+
+    node server.js
+    ./build
+
 ## Goals
 
 * Listen for events on inputs, for this first prototype I will be using polling because the Arduino UNO I'm using has only a few interrupts
