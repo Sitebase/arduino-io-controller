@@ -16,7 +16,7 @@ server.on('clientConnected', function(client) {
 });
 
 server.on('published', function(packet, client) {
-    console.log('published', packet.payload.toString());
+    console.log('published', packet.payload);
 });
 
 server.on('ready', function() {

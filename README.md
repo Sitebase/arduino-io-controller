@@ -17,6 +17,25 @@ a Window XP system.
 
     node server.js | bunyan
     ./build
+    /usr/local/Cellar/mosquitto/1.3.5/sbin/mosquitto -p 1883 -v
+    node client.js
+
+## Messages
+
+* val (`digital read`): Values of the digital inputs configured as inputs
+* c (`channel`): Each IO controller has it's own channel so that you know from what controller you receive the input. While sending a command this can also be used to target a specific IO controller.
+* val[0-5] (`analog read`): analog readed values
+* cmd (`command`): execute a command. e.g. dr, ar, ds
+
+a `dr` command is both triggered by an input change or by sending the `dr` command. The latter case can be used to retrieve the current state of the digital input pins.
+
+|  Topic  |                Message                 |                 Description                  |
+| ------- | -------------------------------------- | -------------------------------------------- |
+| state   | {"c":0,"cmd":"dr","val":8}             | State of the digital inputs                  |
+| state   | {"c":0,"cmd":"ar","val0":200,"val0":2} | Values of the analoge inputs                 |
+| command | {"c":0,"cmd":"dr"}                     | Command to request digital input values      |
+| command | {"c":0,"cmd":"ar"}                     | Command to request analoge input values      |
+| command | {"c":0,"cmd":"ds","v":1,"p":13}        | Command to set the digital output 13 to high |
 
 ## Goals
 

@@ -2,6 +2,7 @@
 #include <Ethernet.h>
 #include <EthernetUdp.h>
 #include <PubSubClient.h>
+#include <String.h>
 
 #define channel 0
 
@@ -33,6 +34,12 @@ void setup() {
     pinMode(9, INPUT_PULLUP);
     //pinMode(10, INPUT_PULLUP);
 
+    pinMode(11, OUTPUT);
+    pinMode(12, OUTPUT);
+    pinMode(13, OUTPUT);
+
+    digitalWrite(12, HIGH);
+
     if (!clientbla.connected()) {
         if (clientbla.connect("arduinoClient")) {
             Serial.println("Connected to server");
@@ -52,12 +59,20 @@ void loop()
     }
 
     if( currentState ^ 0 ) {
-        char buf[15];
-        sprintf(buf, "{\"c\":%d,\"d\":%d}", channel, (previousState ^ currentState));
-        clientbla.publish("outTopic", buf);
+
+        // calculate buffer length needed for the JSON message
+        int state = (previousState ^ currentState);
+        char* format = "{\"c\":%d,\"cmd\":\"dr\",\"val\":%d}";
+        int length = strlen(format) + sizeof(channel) + sizeof(state);
+        char buf[length];
+
+        // construct JSON message
+        sprintf(buf, format, channel, state);
+
+        // publish message
+        clientbla.publish("state", buf);
 
         // reset
-        //previousState = currentState; // don't use this because its a super debounce that lets you only click once until you press another button
         currentState = 0;
     }
 
@@ -80,6 +95,7 @@ void loop()
 
 void callback(char* topic, byte* payload, unsigned int length) {
     // handle message arrived
-    Serial.println("RECEIVED mqtt data");
+    Serial.print("received payload:");
+    Serial.println(topic);
 }
 
