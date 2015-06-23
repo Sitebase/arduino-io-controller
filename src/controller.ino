@@ -2,6 +2,7 @@
 #include <Ethernet.h>
 #include <EthernetUdp.h>
 #include <PubSubClient.h>
+#include <DHT.h>
 #include <String.h>
 
 #define channel 0
@@ -9,12 +10,40 @@
 int previousState = 0;
 int currentState = 0;
 
+int counter = 0;
+#define DHTPIN 2
+#define DHTTYPE DHT11
+DHT dht(DHTPIN, DHTTYPE);
+
+
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 IPAddress ip(192, 168, 1, 177);
 byte remote[] = { 192, 168, 1, 111 };
 
 EthernetClient ethClient;
 EthernetServer server(80);
+
+void callback(char* topic, byte* payload, unsigned int length) {
+
+    Serial.print("callback fired: ");
+    Serial.print(topic);
+    Serial.print(" - ");
+    Serial.print((char)payload[0]);
+    Serial.print(",");
+    Serial.print(payload[1]);
+    Serial.print(",");
+    Serial.print(payload[2]);
+    Serial.print(",");
+    Serial.print(payload[3]);
+    Serial.print(",");
+    Serial.print(payload[4]);
+    Serial.println(";");
+
+    if( (char)payload[0] == '{' )
+    {
+        Serial.println("JSON detected");
+    }
+}
 
 PubSubClient clientbla(remote, 1883, callback, ethClient);
 
@@ -43,6 +72,7 @@ void setup() {
     if (!clientbla.connected()) {
         if (clientbla.connect("arduinoClient")) {
             Serial.println("Connected to server");
+            clientbla.subscribe("command");
         }
     }
 
@@ -55,6 +85,7 @@ void loop()
     if (!clientbla.connected()) {
         if (clientbla.connect("arduinoClient")) {
             Serial.println("Connected to server");
+            clientbla.subscribe("command");
         }
     }
 
@@ -90,12 +121,82 @@ void loop()
     if( digitalRead(9) == LOW ) currentState = currentState | 256;
     //if( digitalRead(10) == LOW ) currentState = currentState | 512; // doesn't connect to mqtt anymore if you enable this
 
+    counter++;
+    if( counter > 20000)
+    {
+        sensors();
+
+        int analog0 = analogRead(A0);
+        int analog1 = analogRead(A1);
+        int analog2 = analogRead(A2);
+        int analog3 = analogRead(A3);
+        int analog4 = analogRead(A4);
+        int analog5 = analogRead(A5);
+
+
+        // Reading temperature or humidity takes about 250 milliseconds!
+          // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
+          float h = dht.readHumidity();
+          // Read temperature as Celsius
+          float t = dht.readTemperature();
+          Serial.print("temp: ");
+          Serial.println(t);
+          Serial.print("hum: ");
+          Serial.println(h);
+
+          //Serial.println(getDecimal(t));
+          int tester = int(t);
+          String value = String(tester);
+          Serial.println(tester);
+          Serial.println(value);
+
+        char* output = "{\"c\":%d,\"cmd\":\"ar\",\"val0\":%d,\"val1\":%d,\"val2\":%d,\"val3\":%d,\"val4\":%d,\"val5\":%d}";
+        int olength = strlen(output) + sizeof(channel) + sizeof(analog0) + sizeof(analog1) + sizeof(analog2) + sizeof(analog3) + sizeof(analog4) + sizeof(analog5);
+        char buf2[olength];
+
+        // construct JSON message
+        sprintf(buf2, output, channel, analog0, analog1, analog2, analog3, analog4, analog5);
+
+        clientbla.publish("state", buf2);
+        counter = 0;
+    }
+
+    clientbla.loop();
 
 }
 
-void callback(char* topic, byte* payload, unsigned int length) {
-    // handle message arrived
-    Serial.print("received payload:");
-    Serial.println(topic);
+void sensors()
+{
+    float h = dht.readHumidity();
+    // Read temperature as Celsius
+    float t = dht.readTemperature();
+    Serial.print("temp: ");
+    Serial.println(t);
+    Serial.print("hum: ");
+    Serial.println(h);
+
+    //Serial.println(getDecimal(t));
+    int temp = int(t);
+    int hum = int(h);
+
+    char* output = "{\"c\":%d,\"cmd\":\"sensor\",\"temperature\":%d,\"humidity\":%d}";
+    int olength = strlen(output) + sizeof(channel) + sizeof(temp) + sizeof(hum);
+    char buf2[olength];
+
+    // construct JSON message
+    sprintf(buf2, output, channel, temp, hum);
+
+    clientbla.publish("/state/sensor", buf2);
 }
 
+
+//function to extract decimal part of float
+long getDecimal(float val)
+{
+ int intPart = int(val);
+ long decPart = 1000*(val-intPart); //I am multiplying by 1000 assuming that the foat values will have a maximum of 3 decimal places
+                                   //Change to match the number of decimal places you need
+ if(decPart>0)return(decPart);           //return the decimal part of float number if it is available
+ else if(decPart<0)return((-1)*decPart); //if negative, multiply by -1
+ else if(decPart=0)return(00);           //return 0 if decimal part of float number is not available
+}

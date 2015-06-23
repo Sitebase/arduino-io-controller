@@ -47,3 +47,7 @@ a `dr` command is both triggered by an input change or by sending the `dr` comma
 ## Resources
 
 * [Button click types detect](http://forum.arduino.cc/index.php?topic=14479.0)
+
+## Todo
+
+* Publish from node client is not received by the arduino, while mosquitto does receive it and sends it off to the arduinoClient
