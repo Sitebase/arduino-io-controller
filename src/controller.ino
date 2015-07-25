@@ -18,7 +18,7 @@ DHT dht(DHTPIN, DHTTYPE);
 
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 IPAddress ip(192, 168, 1, 177);
-byte remote[] = { 192, 168, 1, 111 };
+byte remote[] = { 192, 168, 1, 117 };
 
 EthernetClient ethClient;
 EthernetServer server(80);
@@ -69,12 +69,12 @@ void setup() {
 
     digitalWrite(12, HIGH);
 
-    if (!clientbla.connected()) {
+    /*if (!clientbla.connected()) {
         if (clientbla.connect("arduinoClient")) {
             Serial.println("Connected to server");
             clientbla.subscribe("command");
         }
-    }
+    }*/
 
 }
 
@@ -82,12 +82,14 @@ void loop()
 {
 
     // auto reconnect
+    /*Serial.println("before connect");
     if (!clientbla.connected()) {
+        Serial.println("not connected");
         if (clientbla.connect("arduinoClient")) {
             Serial.println("Connected to server");
             clientbla.subscribe("command");
         }
-    }
+    }*/
 
     if( currentState ^ 0 ) {
 
@@ -121,7 +123,7 @@ void loop()
     if( digitalRead(9) == LOW ) currentState = currentState | 256;
     //if( digitalRead(10) == LOW ) currentState = currentState | 512; // doesn't connect to mqtt anymore if you enable this
 
-    counter++;
+    /*counter++;
     if( counter > 20000)
     {
         sensors();
@@ -161,7 +163,7 @@ void loop()
         counter = 0;
     }
 
-    clientbla.loop();
+    clientbla.loop();*/
 
 }
 

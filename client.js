@@ -1,5 +1,5 @@
 var mqtt = require('mqtt')
-  , host = 'localhost' // or localhost
+  , host = '192.168.1.117' // or localhost
   //, client = mqtt.connect();
   , client = mqtt.connect({ port: 1883, host: host, keepalive: 10000});
 
