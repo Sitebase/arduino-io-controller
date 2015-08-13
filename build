@@ -1,4 +1,0 @@
-# Build and upload new source
-ino clean
-ino build
-ino upload
