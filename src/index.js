@@ -29,11 +29,24 @@ function getMQTTClient()
  *********************/
 
 var button1 = new Gpio(23, 'in', 'falling');
+var button2 = new Gpio(24, 'in', 'falling');
+var led1 = new Gpio(27, 'out');
+var led2 = new Gpio(22, 'out');
+var state = 0;
 
 button1.watch(function(err, value) {
     var mqttClient = getMQTTClient();
     console.log('Button 1 pressed', value);
     mqttClient.publish('io/button1', value);
+});
+
+button2.watch(function(err, value) {
+    var mqttClient = getMQTTClient();
+    console.log('Button 2 pressed', value);
+    mqttClient.publish('io/button2', value);
+
+    state2 = !state2;
+    led2.writeSync(state2 ? 1 : 0);
 });
 
 /**********************
