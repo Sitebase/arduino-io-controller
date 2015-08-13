@@ -1,7 +1,7 @@
 var mqtt    = require('mqtt');
 var express = require('express');
+var onoff = require('onoff').Gpio;
 var config = require('../package.json');
-
 
 /**********************
  * MQTT
@@ -23,6 +23,18 @@ function getMQTTClient()
 {
     return client.connected ? client : null;
 }
+
+/**********************
+ * GPIO
+ *********************/
+
+var button1 = new Gpio(23, 'in', 'falling');
+
+button1.watch(function(err, value) {
+    var mqttClient = getMQTTClient();
+    console.log('Button 1 pressed', value);
+    mqttClient.publish('io/button1', value);
+});
 
 /**********************
  * API
