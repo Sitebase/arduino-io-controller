@@ -32,7 +32,8 @@ var button1 = new Gpio(23, 'in', 'falling');
 var button2 = new Gpio(24, 'in', 'falling');
 var led1 = new Gpio(27, 'out');
 var led2 = new Gpio(22, 'out');
-var state = 0;
+var state1 = 0;
+var state2 = 0;
 
 button1.watch(function(err, value) {
     var mqttClient = getMQTTClient();
