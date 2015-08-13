@@ -1,6 +1,6 @@
 var mqtt    = require('mqtt');
 var express = require('express');
-var onoff = require('onoff').Gpio;
+var Gpio = require('onoff').Gpio;
 var config = require('../package.json');
 
 /**********************
