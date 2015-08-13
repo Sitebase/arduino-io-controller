@@ -46,6 +46,7 @@ button2.watch(function(err, value) {
     mqttClient.publish('io/button2', value);
 
     state2 = !state2;
+    console.log('Set state of led2 to', state2);
     led2.writeSync(state2 ? 1 : 0);
 });
 
