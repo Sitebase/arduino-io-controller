@@ -39,6 +39,10 @@ button1.watch(function(err, value) {
     var mqttClient = getMQTTClient();
     console.log('Button 1 pressed', value);
     mqttClient.publish('io/button1', value);
+
+    state1 = !state1;
+    console.log('Set state of led1 to', state1);
+    led1.writeSync(state2 ? 1 : 0);
 });
 
 button2.watch(function(err, value) {
