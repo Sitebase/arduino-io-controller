@@ -42,7 +42,7 @@ button1.watch(function(err, value) {
 
     state1 = !state1;
     console.log('Set state of led1 to', state1);
-    led1.writeSync(state2 ? 1 : 0);
+    led1.writeSync(state1 ? 1 : 0);
 });
 
 button2.watch(function(err, value) {
